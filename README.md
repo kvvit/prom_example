@@ -1,7 +1,7 @@
 # Prometheus Grafana and Elasticsearch stack
 ## Only for local tests, because ssl/tls not enabled for this test environment
 Before starting, you need to install docker and docker-compose.
-1. Add to ***etc/hosts***
+1. Add to ***/etc/hosts***
 ```bash
 <your IP> alertmanager.monitoring.int
 <your IP> cadvisor.monitoring.int

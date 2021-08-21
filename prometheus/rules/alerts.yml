@@ -1,0 +1,41 @@
+---
+groups:
+  - name: general.rules
+    rules:
+      - alert: InstanceDown
+        expr: (up{job!="domain"}) == 0
+        for: 1m
+        labels:
+          altername: instancedown
+          severity: critical
+        annotations:
+          description: '{{ $labels.instance }} has been down \
+                       for more than 1 minute'
+          summary: Instance is down
+
+      - alert: LinuxServerDiskSpaceUsage
+        expr: (node_filesystem_avail_bytes{mountpoint!="/boot",mountpoint!="/swarm",device!="tmpfs"} * 100) / node_filesystem_size_bytes{mountpoint!="/boot",mountpoint!="/swarm",device!="tmpfs"} < 10
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          summary: Linux Server disk Space Usage (instance {{ $labels.instance }})"
+          description: "Disk usage is more than 90%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+      - alert: LinuxServerOutOfMemory
+        expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Linux server out of memory (instance {{ $labels.instance }})"
+          description: "Linux server memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+      - alert: LinuxServerHighCpuLoad
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Linux server high CPU load (instance {{ $labels.instance }})"
+          description: "CPU load is > 90%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"

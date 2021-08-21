@@ -1,0 +1,5 @@
+# backup files
+*.backup
+*.bak
+# swp files
+*.swp

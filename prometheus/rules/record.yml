@@ -1,0 +1,10 @@
+---
+groups:
+- name: record.rules
+  interval: 30s
+  rules:
+  - record: record_rules:linux_disk_usage
+    expr: (node_filesystem_avail_bytes{mountpoint!="/boot",mountpoint!="/swarm",device!="tmpfs"} * 100) / node_filesystem_size_bytes{mountpoint!="/boot",mountpoint!="/swarm",device!="tmpfs"}
+
+  - record: record_rules:cpu_usage
+    expr: (((count(count(node_cpu_seconds_total{instance=~"node:9100",job=~"dynamic"}) by (cpu))) - avg(sum by (mode)(irate(node_cpu_seconds_total{mode='idle',instance=~"node:9100",job=~"dynamic"}[5m])))) * 100) / count(count(node_cpu_seconds_total{instance=~"node:9100",job=~"dynamic"}) by (cpu))

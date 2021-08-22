@@ -23,3 +23,7 @@ login:    admin
 password: Pometheus
 ```
 5. Change IP's in ***./prometheus/sd_test.json*** for discovery from file.
+6. Added security for elasticsearch
+```
+login:    elastic
+password: Prometheus

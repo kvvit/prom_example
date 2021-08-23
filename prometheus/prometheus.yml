@@ -32,3 +32,12 @@ scrape_configs:
   - job_name: 'dynamic'
     file_sd_configs:
       - files: ['sd_*.json']
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: '192\.168\.1\.103.+'
+        replacement: vasya
+        target_label: machine_name
+      - source_labels: [__address__]
+        regex: '192\.168\.1\.104.+'
+        replacement: ksju
+        target_label: machine_name

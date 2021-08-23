@@ -26,7 +26,7 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
-      - '--storage.tsdb.retention.time=200h'
+      - '--storage.tsdb.retention.time=7d'
       - '--web.enable-lifecycle'
     logging:
       driver: "fluentd"
@@ -105,21 +105,7 @@ services:
       - '--path.procfs=/host/proc'
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)'
-    logging:
-      driver: "fluentd"
-      options:
-        tag: docker.node
-        fluentd-address: localhost:24224
-    depends_on:
-      - prometheus
-      - elasticsearch
-      - kibana
-      - fluentd
-    ports:
-      - "127.0.0.1:9100:9100"
-    networks:
-      monitoring:
-        ipv4_address: 172.19.0.5
+    network_mode: host
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.40.0
@@ -134,7 +120,7 @@ services:
     depends_on:
       - redis
     ports:
-      - "127.0.0.1:8080:8080"
+      - "8080:8080"
     networks:
       monitoring:
         ipv4_address: 172.19.0.6

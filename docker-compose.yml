@@ -102,8 +102,10 @@ services:
       - /:/rootfs:ro
       - /etc/localtime:/etc/localtime:ro
     command:
+      - '--web.listen-address=:9100'
       - '--path.procfs=/host/proc'
       - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)'
     network_mode: host
 
@@ -121,6 +123,10 @@ services:
       - redis
     ports:
       - "8080:8080"
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
     networks:
       monitoring:
         ipv4_address: 172.19.0.6
@@ -130,6 +136,10 @@ services:
     container_name: redis
     ports:
       - "127.0.0.1:6379:6379"
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
     networks:
       monitoring:
         ipv4_address: 172.19.0.7
@@ -171,8 +181,8 @@ services:
       - es-data:/usr/share/elasticsearch/data
       - ./elasticsearch/config:/usr/share/elasticsearch/config
     ports:
-      - "127.0.0.1:9200:9200"
-      - "127.0.0.1:9300:9300"
+      - "9200:9200"
+      - "9300:9300"
     logging:
       driver: "fluentd"
       options:
@@ -205,6 +215,7 @@ services:
 
   fluentd:
     container_name: fluentd
+    hostname: vasya
     build:
       context: ./fluentd
       dockerfile: Dockerfile
